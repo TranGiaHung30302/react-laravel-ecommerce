@@ -1,6 +1,7 @@
 import React from "react";
 import Layout from "./common/Layout";
 import ProductImg1 from "../assets/images/Mens/two.jpg";
+import { Link } from "react-router-dom";
 
 const Shop = () => {
   return (
@@ -9,7 +10,7 @@ const Shop = () => {
         <nav aria-label="breadcrumb" className="py-4">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
-              <a href="#">Home</a>
+              <a href="/">Home</a>
             </li>
             <li className="breadcrumb-item active" aria-current="page">
               Shop
@@ -82,10 +83,12 @@ const Shop = () => {
               <div className="col-md-3 col-6">
                 <div className="card product border-0">
                   <div className="card-img">
-                    <img src={ProductImg1} alt="..." className="w-100" />
+                    <Link to="/product">
+                      <img src={ProductImg1} alt="..." className="w-100" />
+                    </Link>
                   </div>
                   <div className="card-body pt-3">
-                    <a href="#">Red Check Shirt</a>
+                    <Link to="#">Red Check Shirt</Link>
                     <div className="price">
                       $50{" "}
                       <span className="text-decoration-line-through">80$</span>
