@@ -20,7 +20,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     console.log(data);
 
-    const res = await fetch(apiUrl + "admin/login", {
+    const res = await fetch(apiUrl + "/admin/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -90,7 +90,7 @@ const Login = () => {
                   }`}
                   placeholder="Password"
                 />
-                {errors.email && (
+                {errors.password && (
                   <p className="invalid-feedback">{errors.password?.message}</p>
                 )}
               </div>
