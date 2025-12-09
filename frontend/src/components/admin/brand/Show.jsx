@@ -8,12 +8,12 @@ import Nostate from "../../common/Nostate";
 import { toast } from "react-toastify";
 
 const Show = () => {
-  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [loader, setLoader] = useState(false);
 
-  const fetchCategories = async () => {
+  const fetchBrands = async () => {
     setLoader(true);
-    const res = await fetch(`${apiUrl}/categories`, {
+    const res = await fetch(`${apiUrl}/brands`, {
       method: "GET",
       headers: {
         "Content-type": "application/json",
@@ -25,16 +25,16 @@ const Show = () => {
       .then((result) => {
         setLoader(false);
         if (result.status == 200) {
-          setCategories(result.data);
+          setBrands(result.data);
         } else {
           console.log("Something went wrong");
         }
       });
   };
 
-  const deteleCategory = async (id) => {
+  const deteleBrand = async (id) => {
     if (confirm("Are you sure want to delete?")) {
-      const res = await fetch(`${apiUrl}/categories/${id}`, {
+      const res = await fetch(`${apiUrl}/brands/${id}`, {
         method: "DELETE",
         headers: {
           "Content-type": "application/json",
@@ -45,10 +45,8 @@ const Show = () => {
         .then((res) => res.json())
         .then((result) => {
           if (result.status == 200) {
-            const newCategories = categories.filter(
-              (category) => category.id != id
-            );
-            setCategories(newCategories);
+            const newBrands = brands.filter((brand) => brand.id != id);
+            setBrands(newBrands);
             toast.success(result.message);
           } else {
             console.log("Something went wrong");
@@ -58,7 +56,7 @@ const Show = () => {
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchBrands();
   }, []);
 
   return (
@@ -66,8 +64,8 @@ const Show = () => {
       <div className="container">
         <div className="row">
           <div className="d-flex justify-content-between mt-5 pb-3">
-            <h4 className="h4 pb-0 mb-0">Categories</h4>
-            <Link to="/admin/categories/create" className="btn btn-primary">
+            <h4 className="h4 pb-0 mb-0">Brands</h4>
+            <Link to="/admin/brands/create" className="btn btn-primary">
               Create
             </Link>
           </div>
@@ -78,12 +76,12 @@ const Show = () => {
             <div className="card shadow">
               {loader == true && <Loader />}
 
-              {loader == false && categories.length == 0 && (
+              {loader == false && brands.length == 0 && (
                 <Nostate text="Categories not found" />
               )}
 
               <div className="card-body p-4">
-                {categories && categories.length > 0 && (
+                {brands && brands.length > 0 && (
                   <table className="table table-hover">
                     <thead>
                       <tr>
@@ -94,14 +92,14 @@ const Show = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {categories &&
-                        categories.map((category) => {
+                      {brands &&
+                        brands.map((brand) => {
                           return (
-                            <tr key={`category-${category.id}`}>
-                              <td>{category.id}</td>
-                              <td>{category.name}</td>
+                            <tr key={`brand-${brand.id}`}>
+                              <td>{brand.id}</td>
+                              <td>{brand.name}</td>
                               <td>
-                                {category.status == 1 ? (
+                                {brand.status == 1 ? (
                                   <span className="badge text-bg-success">
                                     Active
                                   </span>
@@ -113,7 +111,7 @@ const Show = () => {
                               </td>
                               <td>
                                 <Link
-                                  to={`/admin/categories/edit/${category.id}`}
+                                  to={`/admin/brands/edit/${brand.id}`}
                                   className="text-primary"
                                 >
                                   <svg
@@ -131,7 +129,7 @@ const Show = () => {
 
                                 <Link
                                   className="text-danger ms-2"
-                                  onClick={() => deteleCategory(category.id)}
+                                  onClick={() => deteleBrand(brand.id)}
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"

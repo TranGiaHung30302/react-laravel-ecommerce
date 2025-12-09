@@ -8,12 +8,12 @@ import Nostate from "../../common/Nostate";
 import { toast } from "react-toastify";
 
 const Show = () => {
-  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loader, setLoader] = useState(false);
 
-  const fetchCategories = async () => {
+  const fetchProducts = async () => {
     setLoader(true);
-    const res = await fetch(`${apiUrl}/categories`, {
+    const res = await fetch(`${apiUrl}/products`, {
       method: "GET",
       headers: {
         "Content-type": "application/json",
@@ -25,16 +25,16 @@ const Show = () => {
       .then((result) => {
         setLoader(false);
         if (result.status == 200) {
-          setCategories(result.data);
+          setProducts(result.data);
         } else {
           console.log("Something went wrong");
         }
       });
   };
 
-  const deteleCategory = async (id) => {
+  const deteleProduct = async (id) => {
     if (confirm("Are you sure want to delete?")) {
-      const res = await fetch(`${apiUrl}/categories/${id}`, {
+      const res = await fetch(`${apiUrl}/products/${id}`, {
         method: "DELETE",
         headers: {
           "Content-type": "application/json",
@@ -45,10 +45,8 @@ const Show = () => {
         .then((res) => res.json())
         .then((result) => {
           if (result.status == 200) {
-            const newCategories = categories.filter(
-              (category) => category.id != id
-            );
-            setCategories(newCategories);
+            const newProducts = products.filter((product) => product.id != id);
+            setProducts(newProducts);
             toast.success(result.message);
           } else {
             console.log("Something went wrong");
@@ -58,7 +56,7 @@ const Show = () => {
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchProducts();
   }, []);
 
   return (
@@ -66,8 +64,8 @@ const Show = () => {
       <div className="container">
         <div className="row">
           <div className="d-flex justify-content-between mt-5 pb-3">
-            <h4 className="h4 pb-0 mb-0">Categories</h4>
-            <Link to="/admin/categories/create" className="btn btn-primary">
+            <h4 className="h4 pb-0 mb-0">Products</h4>
+            <Link to="/admin/products/create" className="btn btn-primary">
               Create
             </Link>
           </div>
@@ -78,30 +76,44 @@ const Show = () => {
             <div className="card shadow">
               {loader == true && <Loader />}
 
-              {loader == false && categories.length == 0 && (
-                <Nostate text="Categories not found" />
+              {loader == false && products.length == 0 && (
+                <Nostate text="Products not found" />
               )}
 
               <div className="card-body p-4">
-                {categories && categories.length > 0 && (
+                {products && products.length > 0 && (
                   <table className="table table-hover">
                     <thead>
                       <tr>
                         <th width="50">ID</th>
-                        <th>Name</th>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Sku</th>
                         <th width="100">Status</th>
                         <th width="100">Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {categories &&
-                        categories.map((category) => {
+                      {products &&
+                        products.map((product) => {
                           return (
-                            <tr key={`category-${category.id}`}>
-                              <td>{category.id}</td>
-                              <td>{category.name}</td>
+                            <tr key={`product-${product.id}`}>
+                              <td>{product.id}</td>
                               <td>
-                                {category.status == 1 ? (
+                                <img
+                                  src={product.image_url}
+                                  alt=""
+                                  width={70}
+                                />
+                              </td>
+                              <td>{product.title}</td>
+                              <td>{product.price}</td>
+                              <td>{product.qty}</td>
+                              <td>{product.sku}</td>
+                              <td>
+                                {product.status == 1 ? (
                                   <span className="badge text-bg-success">
                                     Active
                                   </span>
@@ -113,7 +125,7 @@ const Show = () => {
                               </td>
                               <td>
                                 <Link
-                                  to={`/admin/categories/edit/${category.id}`}
+                                  to={`/admin/products/edit/${product.id}`}
                                   className="text-primary"
                                 >
                                   <svg
@@ -131,7 +143,7 @@ const Show = () => {
 
                                 <Link
                                   className="text-danger ms-2"
-                                  onClick={() => deteleCategory(category.id)}
+                                  onClick={() => deteleProduct(product.id)}
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
