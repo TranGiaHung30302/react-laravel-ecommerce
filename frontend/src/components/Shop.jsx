@@ -1,15 +1,22 @@
 import Layout from "./common/Layout";
 import ProductImg1 from "../assets/images/Mens/two.jpg";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { apiUrl } from "./common/http";
 
 const Shop = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  const [categoriesChecked, setCategoriesChecked] = useState([]);
-  const [brandsChecked, setBrandsChecked] = useState([]);
+  const [categoriesChecked, setCategoriesChecked] = useState(() => {
+    const category = searchParams.get("category_id");
+    return category ? category.split(",") : [];
+  });
+  const [brandsChecked, setBrandsChecked] = useState(() => {
+    const brand = searchParams.get("brand_id");
+    return brand ? brand.split(",") : [];
+  });
 
   const fetchProducts = () => {
     let search = [];
@@ -25,7 +32,12 @@ const Shop = () => {
 
     if (search.length > 0) {
       params = new URLSearchParams(search);
+
       console.log(params.toString());
+
+      setSearchParams(params);
+    } else {
+      setSearchParams(params);
     }
 
     const res = fetch(`${apiUrl}/get-products?${params.toString()}`, {
@@ -136,6 +148,13 @@ const Shop = () => {
                         <li className="mb-2" key={`category-${category.id}`}>
                           <input
                             type="checkbox"
+                            defaultChecked={
+                              searchParams.get("category_id")
+                                ? searchParams
+                                    .get("category_id")
+                                    .includes(category.id)
+                                : false
+                            }
                             value={category.id}
                             onClick={handleCategory}
                           />
@@ -158,6 +177,13 @@ const Shop = () => {
                       return (
                         <li className="mb-2" key={`brand-${brand.id}`}>
                           <input
+                            defaultChecked={
+                              searchParams.get("brand_id")
+                                ? searchParams
+                                    .get("brand_id")
+                                    .includes(brand.id)
+                                : false
+                            }
                             type="checkbox"
                             value={brand.id}
                             onClick={handleBrand}
@@ -184,7 +210,7 @@ const Shop = () => {
                     >
                       <div className="card product border-0">
                         <div className="card-img">
-                          <Link to="/product">
+                          <Link to={`/product/${product.id}`}>
                             <img
                               src={product.image_url}
                               alt="..."
@@ -193,7 +219,9 @@ const Shop = () => {
                           </Link>
                         </div>
                         <div className="card-body pt-3">
-                          <a href="#">{product.title}</a>
+                          <Link to={`/product/${product.id}`}>
+                            {product.title}
+                          </Link>
                           <div className="price">
                             ${product.price}
                             {product.compare_price && (

@@ -87,4 +87,25 @@ class ProductController extends Controller
         ], 200);
     }
 
+    public function getProduct($id)
+    {
+        // $product = Product::with('product_images', 'product_sizes')->find($id);
+
+        $product = Product::with('product_images', 'product_sizes.size')->find($id);
+
+        if ($product == null) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Product not found',
+            ], 404);
+        }
+
+        // $productSizes = $product->product_sizes()->pluck('size_id');
+
+        return response()->json([
+            'status' => 200,
+            'data' => $product
+            // 'productSizes' => $productSizes
+        ]);
+    }
 }

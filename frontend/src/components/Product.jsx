@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "./common/Layout";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, FreeMode, Navigation } from "swiper/modules";
 import "swiper/css";
@@ -13,10 +13,41 @@ import ProductImg3 from "../assets/images/Mens/four.jpg";
 import { Rating } from "react-simple-star-rating";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import { apiUrl } from "./common/http";
 
 const Product = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [product, setProduct] = useState([]);
+  const [productImages, setProductImages] = useState([]);
+  const [productSizes, setProductSizes] = useState([]);
+  const params = useParams();
   const [rating, setRating] = useState(4);
+
+  const fetchProduct = async () => {
+    const res = await fetch(`${apiUrl}/get-product/${params.id}`, {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status == 200) {
+          console.log(result);
+          setProduct(result.data);
+          setProductImages(result.data.product_images);
+          setProductSizes(result.data.product_sizes);
+        } else {
+          console.log("Something went wrong");
+        }
+      });
+  };
+
+  useEffect(() => {
+    fetchProduct();
+  }, []);
+
   return (
     <Layout>
       <div className="container product-detail">
@@ -52,40 +83,26 @@ const Product = () => {
                   spaceBetween={10}
                   slidesPerView={6}
                   freeMode={true}
+                  // navigation={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
                   className="mySwiper mt-2"
                 >
-                  <SwiperSlide>
-                    <div className="content">
-                      <img
-                        src={ProductImg}
-                        alt=""
-                        height={100}
-                        className="w-100"
-                      />
-                    </div>
-                  </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="content">
-                      <img
-                        src={ProductImg2}
-                        alt=""
-                        height={100}
-                        className="w-100"
-                      />
-                    </div>
-                  </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="content">
-                      <img
-                        src={ProductImg3}
-                        alt=""
-                        height={100}
-                        className="w-100"
-                      />
-                    </div>
-                  </SwiperSlide>
+                  {productImages &&
+                    productImages.map((productImage, index) => {
+                      return (
+                        <SwiperSlide>
+                          <div className="content" key={`image-${index}`}>
+                            <img
+                              src={productImage.image_url}
+                              alt=""
+                              height={100}
+                              className="w-100"
+                            />
+                          </div>
+                        </SwiperSlide>
+                      );
+                    })}
                 </Swiper>
               </div>
               <div className="col-10">
@@ -101,50 +118,55 @@ const Product = () => {
                   modules={[FreeMode, Navigation, Thumbs]}
                   className="mySwiper2"
                 >
-                  <SwiperSlide>
-                    <div className="content">
-                      <img src={ProductImg} alt="" className="w-100" />
-                    </div>
-                  </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="content">
-                      <img src={ProductImg2} alt="" className="w-100" />
-                    </div>
-                  </SwiperSlide>
-                  <SwiperSlide>
-                    <div className="content">
-                      <img src={ProductImg3} alt="" className="w-100" />
-                    </div>
-                  </SwiperSlide>
+                  {productImages &&
+                    productImages.map((productImage, index) => {
+                      return (
+                        <SwiperSlide>
+                          <div className="content" key={`image-${index}`}>
+                            <img
+                              src={productImage.image_url}
+                              alt=""
+                              // height={100}
+                              className="w-100"
+                            />
+                          </div>
+                        </SwiperSlide>
+                      );
+                    })}
                 </Swiper>
               </div>
             </div>
           </div>
           <div className="col-md-7">
-            <h2>Product Title</h2>
+            <h2>{product.title}</h2>
             <div className="d-flex">
               <Rating size={20} readonly initialValue={rating} />
               <span className="pt-1 ps-2">10 reviews</span>
             </div>
 
             <div className="price h3">
-              $50 <span className="text-decoration-line-through">80$</span>
+              ${product.price}
+              {product.compare_price && (
+                <span className="ms-2 text-decoration-line-through">
+                  ${product.compare_price}
+                </span>
+              )}
             </div>
 
-            <div className="">
-              100% Genuine Products <br />
-              Free Delivery on order over $50 <br />
-              Easy Return within 15 days
-            </div>
+            <div className="">{product.short_description}</div>
 
             <div className="pt-3">
               <strong>Select Size:</strong>
-
               <div className="sizes pt-2">
-                <button className="btn btn-size ms-1">S</button>
-                <button className="btn btn-size ms-1">M</button>
-                <button className="btn btn-size ms-1">L</button>
-                <button className="btn btn-size ms-1">XL</button>
+                {productSizes &&
+                  productSizes.map((productSize) => {
+                    console.log(productSize);
+                    return (
+                      <button className="btn btn-size ms-1">
+                        {productSize.size.name}
+                      </button>
+                    );
+                  })}
               </div>
             </div>
 
@@ -157,7 +179,7 @@ const Product = () => {
             <hr />
 
             <div className="">
-              <strong>SKU: </strong> DF1234
+              <strong>SKU: </strong> {product.sku}
             </div>
           </div>
         </div>
@@ -170,7 +192,9 @@ const Product = () => {
               className="mb-3"
             >
               <Tab eventKey={1} title="Description">
-                Description
+                <div
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                ></div>
               </Tab>
               <Tab eventKey={2} title="Reviews (10)">
                 Reviews

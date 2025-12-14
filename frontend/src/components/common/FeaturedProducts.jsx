@@ -44,7 +44,7 @@ const FeaturedProducts = () => {
                 <div className="col-md-3 col-6" key={`product-${product.id}`}>
                   <div className="card product border-0">
                     <div className="card-img">
-                      <Link to="/product">
+                      <Link to={`/product/${product.id}`}>
                         <img
                           src={product.image_url}
                           alt="..."
@@ -52,8 +52,9 @@ const FeaturedProducts = () => {
                         />
                       </Link>
                     </div>
+
                     <div className="card-body pt-3">
-                      <a href="#">{product.title}</a>
+                      <Link to={`/product/${product.id}`}>{product.title}</Link>
                       <div className="price">
                         ${product.price}
                         {product.compare_price && (
