@@ -8,7 +8,9 @@ import Checkout from "./components/Checkout.jsx";
 import Login from "./components/admin/Login.jsx";
 import { ToastContainer } from "react-toastify";
 import Dashboard from "./components/admin/Dashboard.jsx";
+<Route path="/admin/login" element={<Login />} />;
 import { AdminRequireAuth } from "./components/admin/AdminRequireAuth.jsx";
+import { RequireAuth } from "./components/common/RequireAuth.jsx";
 
 import { default as ShowCategories } from "./components/admin/category/Show.jsx";
 import { default as CreateCategory } from "./components/admin/category/Create.jsx";
@@ -21,18 +23,35 @@ import { default as EditBrand } from "./components/admin/brand/Edit.jsx";
 import { default as ShowProducts } from "./components/admin/product/Show.jsx";
 import { default as CreateProduct } from "./components/admin/product/Create.jsx";
 import { default as EditProduct } from "./components/admin/product/Edit.jsx";
+import Register from "./components/Register.jsx";
+import { default as UserLogin } from "./components/Login.jsx";
+import Profile from "./components/Profile.jsx";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
+          {/* Customer */}
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:id" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/account/register" element={<Register />} />
+          <Route path="/account/login" element={<UserLogin />} />
+          <Route
+            path="/account"
+            element={
+              <RequireAuth>
+                <Profile />
+              </RequireAuth>
+            }
+          />
+
+          {/* Admin */}
           <Route path="/admin/login" element={<Login />} />
+
           <Route
             path="/admin/dashboard"
             element={

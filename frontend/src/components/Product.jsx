@@ -179,9 +179,9 @@ const Product = () => {
                     return (
                       <button
                         key={`p-size-${productSize.id}`}
-                        onClick={() => setSizeSelected(productSize.size_id)}
+                        onClick={() => setSizeSelected(productSize.size.name)}
                         className={`btn btn-size ms-1 ${
-                          sizeSelected == productSize.size_id
+                          sizeSelected == productSize.size.name
                             ? "active bg-dark text-white"
                             : ""
                         }`}
